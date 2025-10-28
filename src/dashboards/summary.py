@@ -1,12 +1,6 @@
-"""
-Summary Dashboard
-Project context and introduction
-"""
-
 import streamlit as st
 
 def show(df_obs, df_fcst, obs_time, fcst_time):
-    """Display summary dashboard with project context"""
     
     st.header("WA Emergency Services Dashboard")
     st.write("Real-time weather monitoring for Western Australian emergency services")
@@ -20,48 +14,27 @@ def show(df_obs, df_fcst, obs_time, fcst_time):
     
     st.markdown("---")
     
-    # PROJECT CONTEXT SECTION
-    st.subheader("📋 Project Context")
+    # Presentation
+    st.subheader("Project Context")
     
-    # ========== CONTEXT HERE ==========
     st.markdown("""
-    **Pending, general context**
-    - Problem definition and message
-    - Goal
-    - Narrative
-    - Target audience
-    - Summarised introduction to the dataset.
-    - A summary of the types of dataset analysis you did through data exploration and discovery.
-    - Hypothesis.          
+    Project Overview
+    Western Australia faces constant threats from extreme weather events: bushfires, floods, dangerous storms, and hazardous coastal tides. Every day, emergency service agencies must make critical decisions to protect lives, homes, and infrastructure.
+    The Bureau of Meteorology operates 140+ weather stations across Western Australia, collecting real-time data every 10 minutes. However, this data arrives in complex XML formats that are difficult for ground personnel to interpret quickly during emergencies.
+    This project bridges that gap by transforming raw meteorological data into clear, visual, actionable insights. The interactive dashboard delivers real-time weather intelligence to three critical emergency services:
+
+    DFES - Fire risk monitoring and firefighting response
+    WA SES - Flood and storm awareness and coordination
+    SLSWA - Coastal hazard and water safety monitoring
+
+    Built on data-driven risk hypotheses, the dashboard converts temperature, humidity, wind, pressure, and rainfall measurements into intuitive visual indicators. Emergency responders can now monitor conditions in real time, anticipate hazards, and make faster decisions that save lives.
+    The system demonstrates how accessible data visualization and modern web technology can enhance emergency response coordination across multiple agencies in a region with some of Australia's most unpredictable and dangerous weather conditions.          
     """)
-    # ==================================
-    
-    st.markdown("---")
-    
-    # Stakeholder information
-    st.subheader("👥 Stakeholders")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("### 🔥 DFES")
-        st.write("**Department of Fire and Emergency Services**")
-        st.write("Monitors fire-weather risk based on temperature, humidity, and wind conditions")
-    
-    with col2:
-        st.markdown("### 🌧️ WA SES")
-        st.write("**State Emergency Service**")
-        st.write("Tracks rainfall intensity, storm activity, and severe weather events")
-    
-    with col3:
-        st.markdown("### 🌊 SLSWA")
-        st.write("**Surf Life Saving WA**")
-        st.write("Monitors coastal exposure, wind conditions, and marine safety")
-    
+   
     st.markdown("---")
     
     # Technical information
-    st.subheader("🔧 Technical Details")
+    st.subheader("Technical Details")
     
     col1, col2 = st.columns(2)
     
@@ -106,7 +79,7 @@ def show(df_obs, df_fcst, obs_time, fcst_time):
     st.markdown("---")
     
     # Limitations
-    st.subheader("⚠️ Limitations")
+    st.subheader("Limitations")
     
     st.info("""
     - Snapshot data only (no historical trends)
