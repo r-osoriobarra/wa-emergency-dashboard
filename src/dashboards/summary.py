@@ -15,26 +15,28 @@ def show(df_obs, df_fcst, obs_time, fcst_time):
     st.markdown("---")
     
     # Presentation
-    st.subheader("Project Context")
+    st.subheader("📋 Project Overview")
     
     st.markdown("""
-    Project Overview
     Western Australia faces constant threats from extreme weather events: bushfires, floods, dangerous storms, and hazardous coastal tides. Every day, emergency service agencies must make critical decisions to protect lives, homes, and infrastructure.
+    
     The Bureau of Meteorology operates 140+ weather stations across Western Australia, collecting real-time data every 10 minutes. However, this data arrives in complex XML formats that are difficult for ground personnel to interpret quickly during emergencies.
+    
     This project bridges that gap by transforming raw meteorological data into clear, visual, actionable insights. The interactive dashboard delivers real-time weather intelligence to three critical emergency services:
-
-    DFES - Fire risk monitoring and firefighting response
-    WA SES - Flood and storm awareness and coordination
-    SLSWA - Coastal hazard and water safety monitoring
+                
+    - DFES - Fire risk monitoring and firefighting response
+    - WA SES - Flood and storm awareness and coordination
+    - SLSWA - Coastal hazard and water safety monitoring
 
     Built on data-driven risk hypotheses, the dashboard converts temperature, humidity, wind, pressure, and rainfall measurements into intuitive visual indicators. Emergency responders can now monitor conditions in real time, anticipate hazards, and make faster decisions that save lives.
+    
     The system demonstrates how accessible data visualization and modern web technology can enhance emergency response coordination across multiple agencies in a region with some of Australia's most unpredictable and dangerous weather conditions.          
     """)
    
     st.markdown("---")
     
     # Technical information
-    st.subheader("Technical Details")
+    st.subheader("🔧 Technical Details")
     
     col1, col2 = st.columns(2)
     
@@ -79,7 +81,7 @@ def show(df_obs, df_fcst, obs_time, fcst_time):
     st.markdown("---")
     
     # Limitations
-    st.subheader("Limitations")
+    st.subheader("⚠️ Limitations")
     
     st.info("""
     - Snapshot data only (no historical trends)
