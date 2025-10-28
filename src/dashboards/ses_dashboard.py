@@ -1,17 +1,10 @@
-"""
-SES Dashboard
-Storm and rainfall monitoring for State Emergency Service
-"""
-
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 from transforms import get_rainfall_summary
 from components import create_rainfall_bar
 
-def show(df):
-    """Display SES storm dashboard"""
-    
+def show(df):    
     st.header("🌧️ WA SES Storm Dashboard")
     
     # Dashboard description
@@ -46,15 +39,14 @@ def show(df):
             help="Number of rainfall stations to show"
         )
 
-    # Apply filters
     df_filtered = df[(df['rainfall'] >= rain_min) & (df['rainfall'] > 0)].copy()
     
-    # Get summary
+    # summary
     summary = get_rainfall_summary(df_filtered)
     
     st.markdown("---")
     
-    # KEY METRICS
+    # key metrics
     col1, col2, col3, col4 = st.columns(4)
     
     col1.metric("Stations with Rain", summary.get('stations_with_rain', 0))
@@ -64,7 +56,7 @@ def show(df):
     
     st.markdown("---")
     
-    # RAINFALL SECTION (ALIGNED)
+    # rainfall section
     st.subheader("🌧️ Current Rainfall Activity")
     
     col1, col2 = st.columns([2.5, 1])
@@ -72,11 +64,10 @@ def show(df):
     with col1:
         st.caption("Stations with active rainfall (hover for details)")
         
-        # Rainfall bar chart (Plotly - interactive tooltips)
         rain_fig = create_rainfall_bar(df_filtered, n=top_n)
         
         rain_fig.update_layout(
-            height=500,  # Match map height
+            height=500,
             legend=dict(font=dict(color="black"))
         )
         
@@ -88,7 +79,7 @@ def show(df):
         rain_data = df_filtered[df_filtered['rainfall'] > 0]['rainfall'].dropna()
         
         if len(rain_data) > 0:
-            # Histogram - SAME HEIGHT
+            # histogram
             fig, ax = plt.subplots(figsize=(5, 6.5))
             
             ax.hist(rain_data, bins=10, color='skyblue', edgecolor='black')
@@ -114,15 +105,13 @@ def show(df):
     
     st.markdown("---")
     
-    # WIND ANALYSIS SECTION (WITH HOVER)
     st.subheader("💨 Wind Analysis")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.caption("Relationship between wind speed and gusts (hover over points)")
-        
-        # Use Plotly for interactive scatter
+
         import plotly.express as px
         
         wind_data = df_filtered[['station_name', 'wind_spd_kmh', 'gust_kmh']].dropna()
@@ -167,8 +156,7 @@ def show(df):
             st.pyplot(fig)
     
     st.markdown("---")
-    
-    # PRESSURE ANALYSIS SECTION
+
     st.subheader("🌀 Atmospheric Pressure Analysis")
     st.caption("Low pressure highlights potential storm activity. Ordered from lowest to highest.")
 
@@ -183,20 +171,17 @@ def show(df):
     )
 
     if len(pressure_data) > 0:
-        # Calculate mean pressure
         mean_p = pressure_data['msl_pres'].mean()
-        
-        # Calculate deviation from mean
         pressure_data['deviation'] = pressure_data['msl_pres'] - mean_p
         
-        # Define alert: stations with pressure 3+ hPa below mean
+        # define alert for stations with pressure 3+ hPa below mean
         pressure_data['Status'] = np.where(
             pressure_data['deviation'] < -3, 
             'Alert', 
             'Normal'
         )
         
-        # Create bar chart
+        # bar chart
         fig = px.bar(
             pressure_data,
             x='station_name',
@@ -205,20 +190,20 @@ def show(df):
             color_discrete_map={'Alert': 'red', 'Normal': 'steelblue'},
             hover_data={
                 'station_name': True, 
-                'msl_pres': ':.1f',  # Added atmospheric pressure
+                'msl_pres': ':.1f',
                 'deviation': ':.2f', 
                 'Status': True
             },
             labels={
                 'station_name': 'Station', 
                 'deviation': 'Deviation (hPa)',
-                'msl_pres': 'Pressure (hPa)'  # Label for hover
+                'msl_pres': 'Pressure (hPa)' 
             },
             title='Pressure Deviation from Mean',
             height=450
         )
         
-        # Add reference lines
+        # reference lines
         fig.add_hline(y=0, line_dash='solid', line_color='black',
                     annotation_text=f"Mean ({mean_p:.1f} hPa)", 
                     annotation_position="top left")
@@ -226,7 +211,7 @@ def show(df):
                     annotation_text="Alert Threshold (-3 hPa)", 
                     annotation_position="bottom left")
         
-        # Format layout
+        # layout
         fig.update_layout(
             xaxis={'categoryorder': 'array', 
                 'categoryarray': pressure_data['station_name'].tolist()},

@@ -1,16 +1,9 @@
-"""
-Forecast Dashboard
-7-day weather forecast for all WA localities
-"""
-
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from transforms import get_weather_emoji
 
-def show(df_fcst):
-    """Display 7-day forecast dashboard"""
-    
+def show(df_fcst):    
     st.header("📅 7-Day Weather Forecast")
     
     # Dashboard description
@@ -26,7 +19,7 @@ def show(df_fcst):
     
     st.markdown("---")
     
-    # 7-DAY FORECAST TABLE
+    # forecast table
     st.subheader("📋 7-Day Forecast by Location")
     
     # Get unique locations
@@ -39,7 +32,7 @@ def show(df_fcst):
         # Filter data for this location
         location_fcst = df_fcst[df_fcst['locality_name'] == location].copy()
         
-        # Sort by period index and limit to 7 days
+        # sort by period index and limit to 7 days
         if 'period_index' in location_fcst.columns:
             location_fcst = location_fcst.sort_values('period_index').head(7)
         else:
@@ -55,18 +48,15 @@ def show(df_fcst):
             # Get emoji and description
             emoji = get_weather_emoji(forecast_row['icon_code'])
             description = forecast_row['precis_text'] if pd.notna(forecast_row['precis_text']) else 'N/A'
-            
-            # Combine emoji and short description
+
             day_forecast = f"{emoji} {description}"
             
-            # Add to row
             day_labels = ['Today', 'Tomorrow', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7']
             day_name = day_labels[period] if period < len(day_labels) else f"Day {period+1}"
             row[day_name] = day_forecast
         
         forecast_data.append(row)
     
-    # Convert to DataFrame
     forecast_df = pd.DataFrame(forecast_data)
     
     # Display the table
@@ -74,7 +64,7 @@ def show(df_fcst):
     
     st.markdown("---")
     
-    # TOP LOCATIONS
+    # Add top locations
     st.subheader("🔥 Top 5 Hottest Locations (Max Temp)")
     
     # Get max temp per location across all periods
@@ -83,7 +73,7 @@ def show(df_fcst):
     col1, col2 = st.columns(2)
     
     with col1:
-        # Display as table
+        # diplay table
         top_hot = pd.DataFrame({
             'Location': max_temps.index,
             'Max Temp (°C)': max_temps.values.round(1)

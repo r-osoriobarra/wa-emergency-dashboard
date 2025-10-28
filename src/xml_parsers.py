@@ -1,21 +1,8 @@
-"""
-XML Parsing Module
-Handles fetching and parsing BOM XML feeds.
-
-This module contains all XML-specific logic isolated from the main application.
-If BOM changes their XML structure, modifications are needed only here.
-"""
-
 import requests
 import pandas as pd
 from lxml import etree
 from datetime import datetime
 from utils import to_float
-
-
-# =============================================================================
-# HTTP REQUEST CONFIGURATION
-# =============================================================================
 
 # Headers to mimic browser requests (BOM blocks requests without User-Agent)
 HTTP_HEADERS = {
@@ -24,25 +11,8 @@ HTTP_HEADERS = {
     'Accept-Language': 'en-US,en;q=0.5',
 }
 
-
-# =============================================================================
-# LOW-LEVEL: FETCH XML
-# =============================================================================
-
 def fetch_xml(url, timeout=10):
-    """
-    Fetch XML content from a URL and return parsed tree.
     
-    Args:
-        url (str): URL to fetch
-        timeout (int): Request timeout in seconds
-        
-    Returns:
-        lxml.etree.Element: Parsed XML root element
-        
-    Raises:
-        Exception: If fetch fails or XML is malformed
-    """
     try:
         response = requests.get(url, headers=HTTP_HEADERS, timeout=timeout)
         response.raise_for_status()
@@ -56,36 +26,8 @@ def fetch_xml(url, timeout=10):
     except etree.XMLSyntaxError as e:
         raise Exception(f"Failed to parse XML from {url}: {str(e)}")
 
-
-# =============================================================================
-# PARSE OBSERVATIONS
-# =============================================================================
-
 def parse_observations_xml(xml_root):
-    """
-    Parse BOM observations XML into a structured DataFrame.
     
-    The BOM observations XML has a nested structure:
-    <product>
-      <observations>
-        <station stn-id="..." stn-name="..." lat="..." lon="...">
-          <period time-local="..." time-utc="...">
-            <level type="surface">
-              <element type="air_temperature">15.0</element>
-              <element type="rel-humidity">96</element>
-              ...
-    
-    Note: Values are in element.text, not in a 'value' attribute.
-    
-    Args:
-        xml_root (lxml.etree.Element): Parsed XML root
-        
-    Returns:
-        pd.DataFrame: Normalized observations with columns:
-            station_id, station_name, lat, lon, time_utc, time_local,
-            air_temperature, rel_humidity, wind_spd_kmh, gust_kmh,
-            vis_km, msl_pres, rainfall
-    """
     records = []
     
     # Navigate XML structure
@@ -166,24 +108,8 @@ def parse_observations_xml(xml_root):
     return df[expected_cols]
 
 
-# =============================================================================
-# PARSE FORECASTS
-# =============================================================================
-
 def parse_forecasts_xml(xml_root):
-    """
-    Parse BOM town forecasts XML into a structured DataFrame.
-    
-    Now extracts ALL forecast periods (7-8 days) instead of just the first.
-    
-    Args:
-        xml_root (lxml.etree.Element): Parsed XML root
-        
-    Returns:
-        pd.DataFrame: Normalized forecasts with columns:
-            locality_name, area_code, fcst_time, period_index, min_temp, max_temp,
-            rain_probability, precis_text, icon_code
-    """
+
     records = []
     
     forecast_root = xml_root.find('.//forecast')
@@ -260,25 +186,8 @@ def parse_forecasts_xml(xml_root):
     return df[expected_cols]
 
 
-# =============================================================================
-# HIGH-LEVEL: FETCH AND PARSE (Public API)
-# =============================================================================
-
 def fetch_and_parse_observations(url):
-    """
-    Fetch and parse observations feed in one step.
     
-    This is the main function called by bom_ingest.py
-    
-    Args:
-        url (str): BOM observations feed URL
-        
-    Returns:
-        tuple: (DataFrame, datetime) - parsed data and fetch timestamp
-        
-    Raises:
-        Exception: If fetch or parse fails
-    """
     xml_root = fetch_xml(url)
     df = parse_observations_xml(xml_root)
     fetch_time = datetime.now()
@@ -287,20 +196,7 @@ def fetch_and_parse_observations(url):
 
 
 def fetch_and_parse_forecasts(url):
-    """
-    Fetch and parse forecasts feed in one step.
     
-    This is the main function called by bom_ingest.py
-    
-    Args:
-        url (str): BOM forecasts feed URL
-        
-    Returns:
-        tuple: (DataFrame, datetime) - parsed data and fetch timestamp
-        
-    Raises:
-        Exception: If fetch or parse fails
-    """
     xml_root = fetch_xml(url)
     df = parse_forecasts_xml(xml_root)
     fetch_time = datetime.now()

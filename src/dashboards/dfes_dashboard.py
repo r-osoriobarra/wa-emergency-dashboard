@@ -1,8 +1,3 @@
-"""
-DFES Dashboard
-Fire risk monitoring for Department of Fire and Emergency Services
-"""
-
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -10,7 +5,6 @@ from transforms import get_fire_risk_summary
 from components import create_risk_map, create_top_stations_table
 
 def show(df):
-    """Display DFES fire risk dashboard"""
     st.markdown('<div id="top"></div>', unsafe_allow_html=True)
     
     st.header("🔥 DFES Fire Risk Dashboard")
@@ -55,7 +49,7 @@ def show(df):
     # Get summary stats
     summary = get_fire_risk_summary(df_filtered)
     
-    # KEY METRICS (Top row)
+    # key metrics
     col1, col2, col3, col4 = st.columns(4)
     
     col1.metric("Stations Shown", len(df_filtered))
@@ -84,7 +78,7 @@ def show(df):
         
         # Fix legend text color to black
         map_fig.update_layout(
-            height=500,  # Fixed height
+            height=500,
             legend=dict(
                 bgcolor="rgba(255, 255, 255, 0.9)",
                 bordercolor="black",
@@ -98,7 +92,7 @@ def show(df):
     with col2:
         st.caption("Station count by risk level")
         
-        # Risk distribution bar chart (Seaborn) - SAME HEIGHT AS MAP
+        # Risk distribution bar chart
         fig, ax = plt.subplots(figsize=(5, 6.5))
         
         band_counts = df_filtered['fire_risk_band'].value_counts()
@@ -121,7 +115,7 @@ def show(df):
     
     st.markdown("---")
     
-    # ANALYSIS SECTION: Temperature vs Humidity (WITH HOVER)
+    # Temperature vs Humidity
     st.subheader("🔍 Risk Factor Analysis")
     
     col1, col2 = st.columns(2)
@@ -129,8 +123,7 @@ def show(df):
     with col1:
         st.caption("How temperature and humidity affect fire risk (hover over points)")
         
-        # Use Plotly for interactive scatter with hover
-        import plotly.express as px
+        import plotly.express as px #for interactive features
         
         scatter_data = df_filtered[
             df_filtered['air_temperature'].notna() & 
@@ -176,7 +169,7 @@ def show(df):
     with col2:
         st.caption("Wind speed distribution by risk level")
         
-        # Boxplot (Seaborn)
+        # Boxplot
         fig, ax = plt.subplots(figsize=(7, 5))
         
         wind_data = df_filtered[df_filtered['wind_spd_kmh'].notna()]
@@ -196,7 +189,7 @@ def show(df):
     
     st.markdown("---")
     
-    # TOP STATIONS TABLE
+    # Top stations table
     top_n = st.selectbox(
         "Top N Stations",
         options=[10, 15, 20, 50, 100, 150],

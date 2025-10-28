@@ -1,8 +1,3 @@
-"""
-SLSWA Dashboard
-Coastal safety monitoring for Surf Life Saving WA
-"""
-
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -12,8 +7,6 @@ from transforms import get_coastal_summary
 from components import create_risk_map, create_top_stations_table
 
 def show(df):
-    """Display SLSWA coastal dashboard"""
-    
     st.header("🌊 SLSWA Coastal Safety Dashboard")
     
     # Dashboard description
@@ -50,7 +43,6 @@ def show(df):
     with col3:
         show_low_vis = True
     
-    # Apply filters
     df_filtered = df[
         (df['wind_spd_kmh'] >= wind_min) &
         (df['exposure_band'].isin(exposure_bands))
@@ -61,7 +53,7 @@ def show(df):
     
     st.markdown("---")
     
-    # KEY METRICS
+    # key metricsa
     col1, col2, col3, col4 = st.columns(4)
     
     col1.metric("Stations Shown", len(df_filtered))
@@ -71,15 +63,14 @@ def show(df):
     
     st.markdown("---")
     
-    # MAIN CONTENT: Map and Distribution (ALIGNED)
+    # coastal map
     st.subheader("📍 Coastal Exposure Map")
     
     col1, col2 = st.columns([2.5, 1])
     
     with col1:
         st.caption("Interactive map - Marker size represents gust intensity")
-        
-        # Coastal map (Plotly)
+    
         map_fig = create_risk_map(
             df_filtered,
             score_col='exposure_score',
@@ -88,7 +79,6 @@ def show(df):
             size_col='gust_kmh'
         )
         
-        # Fix legend text color and height
         map_fig.update_layout(
             height=500,
             legend=dict(
@@ -104,7 +94,7 @@ def show(df):
     with col2:
         st.caption("Exposure level distribution")
         
-        # Pie chart - SAME HEIGHT
+        # Pie chart
         fig, ax = plt.subplots(figsize=(5, 6.5))
         
         exposure_counts = df_filtered['exposure_band'].value_counts()
@@ -120,7 +110,6 @@ def show(df):
     
     st.markdown("---")
     
-    # WIND ANALYSIS SECTION (WITH HOVER)
     st.subheader("💨 Wind Conditions")
     
     col1, col2 = st.columns(2)
@@ -128,13 +117,13 @@ def show(df):
     with col1:
         st.caption("Wind and gust comparison by exposure level")
         
-        # Grouped boxplot (Seaborn)
+        # Grouped boxplot
         fig, ax = plt.subplots(figsize=(7, 5))
         
         wind_data = df_filtered[['wind_spd_kmh', 'gust_kmh', 'exposure_band']].dropna()
         
         if len(wind_data) > 0:
-            # Melt data
+
             wind_melted = wind_data.melt(
                 id_vars=['exposure_band'],
                 value_vars=['wind_spd_kmh', 'gust_kmh'],
@@ -159,7 +148,7 @@ def show(df):
     with col2:
         st.caption("Current wind speed scatter (hover over points)")
         
-        # Interactive scatter with Plotly
+        # Scatterplot
         import plotly.express as px
         
         scatter_data = df_filtered[['station_name', 'wind_spd_kmh', 'exposure_band']].dropna()
@@ -190,13 +179,12 @@ def show(df):
             st.plotly_chart(fig, use_container_width=True)
     
     st.markdown("---")
-    
-    # VISIBILITY SECTION
+
     if show_low_vis:
         st.subheader("👁️ Visibility Alerts")
         
         low_vis = df_filtered[df_filtered['vis_km'] < 10].copy()
-        
+        #setting up visibility alerts
         if len(low_vis) > 0:
             st.warning(f"⚠️ {len(low_vis)} stations with low visibility (< 10km)")
             
@@ -207,7 +195,7 @@ def show(df):
     
     st.markdown("---")
     
-    # TOP STATIONS TABLE
+    # top stations table
     top_n = st.selectbox(
         "Top N Stations",
         options=[10, 15, 20, 50, 100, 150],

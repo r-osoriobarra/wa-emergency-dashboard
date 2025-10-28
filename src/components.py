@@ -1,21 +1,7 @@
-"""
-Components Module
-Reusable Plotly visualization components for the dashboard.
-
-Functions create interactive maps, charts, and tables that can be
-used across all three dashboards (DFES, WA SES, SLSWA).
-"""
-
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 
-
-# =============================================================================
-# CONFIGURATION: COLORS
-# =============================================================================
-
-# Color scheme for risk bands (consistent across all dashboards)
 RISK_COLORS = {
     'Low': '#2ecc71',       # Green
     'Moderate': '#f39c12',  # Orange
@@ -25,29 +11,13 @@ RISK_COLORS = {
 }
 
 # Map styling
-MAP_STYLE = 'open-street-map'  # Options: 'open-street-map', 'carto-positron', 'carto-darkmatter'
-MAP_CENTER = {'lat': -26.0, 'lon': 121.0}  # Center of WA
+MAP_STYLE = 'open-street-map'  
+MAP_CENTER = {'lat': -26.0, 'lon': 121.0}
 MAP_ZOOM = 4.5
 
 
-# =============================================================================
-# 1. INTERACTIVE RISK MAP
-# =============================================================================
-
 def create_risk_map(df, score_col, band_col, title, size_col=None):
-    """
-    Create an interactive map showing stations colored by risk band.
     
-    Args:
-        df (pd.DataFrame): Data with lat, lon, station_name, and risk columns
-        score_col (str): Name of score column (e.g., 'fire_risk_score')
-        band_col (str): Name of band column (e.g., 'fire_risk_band')
-        title (str): Map title
-        size_col (str, optional): Column to use for marker size (e.g., 'wind_spd_kmh')
-        
-    Returns:
-        plotly.graph_objects.Figure: Interactive map
-    """
     # Filter out stations without coordinates or risk data
     df_map = df[df['lat'].notna() & df['lon'].notna() & df[band_col].notna()].copy()
     
@@ -121,22 +91,8 @@ def create_risk_map(df, score_col, band_col, title, size_col=None):
     return fig
 
 
-# =============================================================================
-# 2. RISK BAND DISTRIBUTION CHART
-# =============================================================================
-
 def create_band_distribution(df, band_col, title):
-    """
-    Create a bar chart showing distribution of risk bands.
-    
-    Args:
-        df (pd.DataFrame): Data with risk band column
-        band_col (str): Name of band column
-        title (str): Chart title
-        
-    Returns:
-        plotly.graph_objects.Figure: Bar chart
-    """
+ 
     # Count stations per band
     band_counts = df[band_col].value_counts()
     
@@ -165,25 +121,7 @@ def create_band_distribution(df, band_col, title):
     
     return fig
 
-
-# =============================================================================
-# 3. TOP STATIONS TABLE
-# =============================================================================
-
 def create_top_stations_table(df, score_col, band_col, n=10, columns=None):
-    """
-    Create a formatted table of top N stations by score.
-    
-    Args:
-        df (pd.DataFrame): Data with station and risk columns
-        score_col (str): Name of score column to sort by
-        band_col (str): Name of band column
-        n (int): Number of top stations to show
-        columns (list, optional): Specific columns to display
-        
-    Returns:
-        pd.DataFrame: Styled dataframe for display
-    """
     # Default columns if not specified
     if columns is None:
         columns = ['station_name', score_col, band_col]
@@ -198,25 +136,8 @@ def create_top_stations_table(df, score_col, band_col, n=10, columns=None):
     
     return df_top
 
-
-# =============================================================================
-# 4. METRIC COMPARISON CHART
-# =============================================================================
-
 def create_metric_scatter(df, x_col, y_col, color_col, title):
-    """
-    Create a scatter plot comparing two metrics, colored by risk band.
-    
-    Args:
-        df (pd.DataFrame): Data with metrics and risk band
-        x_col (str): Column name for x-axis
-        y_col (str): Column name for y-axis
-        color_col (str): Band column for coloring
-        title (str): Chart title
-        
-    Returns:
-        plotly.graph_objects.Figure: Scatter plot
-    """
+
     # Filter valid data
     df_plot = df[df[x_col].notna() & df[y_col].notna()].copy()
     
@@ -267,22 +188,8 @@ def create_metric_scatter(df, x_col, y_col, color_col, title):
     
     return fig
 
-
-# =============================================================================
-# 5. RAINFALL INTENSITY CHART
-# =============================================================================
-
 def create_rainfall_bar(df, n=15):
-    """
-    Create a bar chart of stations with rainfall, sorted by amount.
-    
-    Args:
-        df (pd.DataFrame): Data with rainfall column
-        n (int): Number of stations to show
-        
-    Returns:
-        plotly.graph_objects.Figure: Bar chart
-    """
+
     # Filter stations with rainfall
     df_rain = df[df['rainfall'] > 0].copy()
     
@@ -323,24 +230,8 @@ def create_rainfall_bar(df, n=15):
     
     return fig
 
-
-# =============================================================================
-# 6. KPI METRICS DISPLAY
-# =============================================================================
-
 def format_kpi(label, value, unit='', delta=None):
-    """
-    Format a KPI metric for display.
-    
-    Args:
-        label (str): KPI label
-        value (float or int): KPI value
-        unit (str): Unit of measurement
-        delta (float, optional): Change from previous (for trends)
-        
-    Returns:
-        dict: Formatted KPI data for Streamlit metric display
-    """
+
     return {
         'label': label,
         'value': f"{value:.2f}{unit}" if isinstance(value, float) else f"{value}{unit}",
@@ -349,15 +240,7 @@ def format_kpi(label, value, unit='', delta=None):
 
 
 def get_summary_kpis(summary_dict):
-    """
-    Extract key KPIs from a summary dictionary.
-    
-    Args:
-        summary_dict (dict): Summary from get_*_summary functions
-        
-    Returns:
-        list: List of formatted KPI dictionaries
-    """
+
     kpis = []
     
     if 'highest_risk_station' in summary_dict:
