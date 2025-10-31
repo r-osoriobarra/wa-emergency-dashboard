@@ -1,3 +1,1 @@
-"""
-BOM Dashboard Source Package
-"""
+#BOM Dashboard Source Package

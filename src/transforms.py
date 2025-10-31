@@ -1,10 +1,3 @@
-"""
-Metrics:
-1. Fire Risk Score (DFES) - temperature, humidity, wind-based
-2. Rainfall Accumulations (WA SES) - intensity and rolling sums
-3. Coastal Exposure Score (SLSWA) - wind and gust-based
-"""
-
 import pandas as pd
 import numpy as np
 #risk bands
